@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import Tasks from './components/Tasks/Tasks';
 import NewTask from './components/NewTask/NewTask';
@@ -8,25 +8,26 @@ import useHttp from "./hooks/use-http";
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  const transformTask = taskObj => {
-    const loadedTasks = [];
-
-    for (const taskKey in taskObj) {
-      loadedTasks.push({ id: taskKey, text: taskObj[taskKey].text });
-    }
-
-    setTasks(loadedTasks);
-  };
-
-  const {isLoading, error, sendRequest: fetchTasks } = useHttp(
-      {url: 'https://vue-http-demo-a3d10-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'},
-      transformTask
-  );
+  const {isLoading, error, sendRequest: fetchTasks } = useHttp();
 
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+
+      const transformTask = (taskObj) => {
+          const loadedTasks = [];
+
+          for (const taskKey in taskObj) {
+              loadedTasks.push({ id: taskKey, text: taskObj[taskKey].text });
+          }
+
+          setTasks(loadedTasks);
+      };
+
+    fetchTasks(
+        { url: 'https://vue-http-demo-a3d10-default-rtdb.europe-west1.firebasedatabase.app/tasks.json' },
+        transformTask
+    );
+  }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
     setTasks((prevTasks) => prevTasks.concat(task));
